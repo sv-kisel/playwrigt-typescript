@@ -24,6 +24,9 @@ test('has title 2', async ({ page }) => {
   await expect(page).toHaveTitle(/Playwright/);
 });
 
-test('2 plus 3 is 7', async ({ page }) => {
-  expect(2 + 3).toEqual(7);
+test('has title 3', async ({ page }) => {
+  await page.goto('https://www.google.com/maps/');
+
+  // Expect a title "to contain" a substring.
+  await expect(page).toHaveTitle(/Gooogle/);
 });
