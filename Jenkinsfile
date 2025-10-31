@@ -40,7 +40,7 @@ pipeline {
                         if [ -n "$REPORT_PATH" ]; then
                             echo "📤 Uploading Playwright JSON report: $REPORT_PATH"
                             curl -X POST "http://host.docker.internal:3001/api/v1/json-report/upload" \
-                                -H "Authorization: " \
+                                -H "Authorization: $TOKEN" \
                                 -F "report=@$REPORT_PATH;type=application/json" \
                                 -F "projectId=1782448e-f065-4e08-a179-f013dd24f6b9"
                         else
