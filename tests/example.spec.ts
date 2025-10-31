@@ -23,3 +23,7 @@ test('has title 2', async ({ page }) => {
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Playwright/);
 });
+
+test('2 plus 3 is 5', async ({ page }) => {
+  expect(2 + 3).toEqual(5);
+});
