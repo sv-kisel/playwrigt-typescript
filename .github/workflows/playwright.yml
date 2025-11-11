@@ -36,6 +36,13 @@ jobs:
           npx playwright test
           ls -l results.json || true
 
+      - name: Upload Vitest report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: results.json
+          
       # 4️⃣ Checkout CLI repo
       - name: Checkout CLI repo
         if: always()
@@ -62,12 +69,12 @@ jobs:
       - name: Process Vitest report
         if: always()
         run: |
-          VITEST_REPORT=$GITHUB_WORKSPACE/reports/vitest-report.json
+          PLAYWRIGHT_REPORT=$GITHUB_WORKSPACE/results.json
           SCRIPT_PATH=$GITHUB_WORKSPACE/utils-repo/dist/src/cli.js
           echo "TEST_PORTAL_URL: $TEST_PORTAL_URL"
           echo "TEST_PORTAL_API_KEY: $TEST_PORTAL_API_KEY"
 
-          ls -l $VITEST_REPORT || true
+          ls -l $PLAYWRIGHT_REPORT || true
           ls -l $SCRIPT_PATH || true
 
-          node $SCRIPT_PATH -i "$VITEST_REPORT" -t vitest
+          node $SCRIPT_PATH -i "$PLAYWRIGHT_REPORT" -t playwright
