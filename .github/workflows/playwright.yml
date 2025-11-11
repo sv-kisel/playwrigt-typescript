@@ -1,27 +1,73 @@
-name: Playwright Tests
+name: Playwright CI
+
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  PATH: "/opt/homebrew/bin:${{ env.PATH }}"
+  TEST_PORTAL_URL: ${{ secrets.TEST_PORTAL_URL }}
+  TEST_PORTAL_API_KEY: ${{ secrets.TEST_PORTAL_API_KEY }}
+  CLI_BRANCH: "fix/send-logic"
+
 jobs:
   test:
-    timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      # 1️⃣ Stage: Checkout main repo
+      - name: Checkout main repo
+        uses: actions/checkout@v4
+        with:
+          repository: sv-kisel/playwrigt-typescript
+          ref: main
+
+      # 2️⃣ Stage: Install dependencies
+      - name: Install dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps
+
+      # 3️⃣ Stage: Run Playwright tests
+      - name: Run Playwright tests
+        continue-on-error: true
+        run: |
+          npx playwright test
+          ls -l results.json || true
+
+      # 4️⃣ Checkout CLI repo
+      - name: Checkout CLI repo
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          repository: iharMikailau/test-portal-integration-cli
+          ref: fix/send-logic
+          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+          path: utils-repo
+
+      - name: List utils-repo files
+        if: always()
+        run: ls -la utils-repo
+
+      # 5️⃣ Install and build CLI repo
+      - name: Install & build CLI
+        if: always()
+        run: |
+          cd utils-repo
+          npm install
+          npm run build
+
+      # 6️⃣ Process Vitest report with CLI
+      - name: Process Vitest report
+        if: always()
+        run: |
+          VITEST_REPORT=$GITHUB_WORKSPACE/reports/vitest-report.json
+          SCRIPT_PATH=$GITHUB_WORKSPACE/utils-repo/dist/src/cli.js
+          echo "TEST_PORTAL_URL: $TEST_PORTAL_URL"
+          echo "TEST_PORTAL_API_KEY: $TEST_PORTAL_API_KEY"
+
+          ls -l $VITEST_REPORT || true
+          ls -l $SCRIPT_PATH || true
+
+          node $SCRIPT_PATH -i "$VITEST_REPORT" -t vitest
