@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  PATH: "/opt/homebrew/bin:${{ env.PATH }}"
+  #PATH: "/opt/homebrew/bin:${{ env.PATH }}"
   TEST_PORTAL_URL: ${{ secrets.TEST_PORTAL_URL }}
   TEST_PORTAL_API_KEY: ${{ secrets.TEST_PORTAL_API_KEY }}
   CLI_BRANCH: "fix/send-logic"
