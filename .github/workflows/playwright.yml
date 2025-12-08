@@ -29,7 +29,6 @@ jobs:
           npm ci
           npx playwright install --with-deps
 
-      # 3️⃣ Stage: Run Playwright tests
       - name: Run Playwright tests
         continue-on-error: true
         run: |
@@ -43,38 +42,18 @@ jobs:
           name: playwright-report
           path: results.json
           
-      # 4️⃣ Checkout CLI repo
-      - name: Checkout CLI repo
-        if: always()
-        uses: actions/checkout@v4
-        with:
-          repository: iharMikailau/test-portal-integration-cli
-          ref: fix/send-logic
-          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-          path: utils-repo
+      - name: Configure npm auth for GitHub Packages
+        run: |
+          echo "@vention-test-portal:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_GITHUB_TOKEN }}" >> .npmrc
+   
+      - name: Install test reporter CLI
+        run: |
+          npm install @vention-test-portal/test-portal-integration-cli
 
-      - name: List utils-repo files
-        if: always()
-        run: ls -la utils-repo
-
-      # 5️⃣ Install and build CLI repo
-      - name: Install & build CLI
+      - name: Upload Test Results
         if: always()
         run: |
-          cd utils-repo
-          npm install
-          npm run build
-
-      # 6️⃣ Process Vitest report with CLI
-      - name: Process Vitest report
-        if: always()
-        run: |
-          PLAYWRIGHT_REPORT=$GITHUB_WORKSPACE/results.json
-          SCRIPT_PATH=$GITHUB_WORKSPACE/utils-repo/dist/src/cli.js
-          echo "TEST_PORTAL_URL: $TEST_PORTAL_URL"
-          echo "TEST_PORTAL_API_KEY: $TEST_PORTAL_API_KEY"
-
-          ls -l $PLAYWRIGHT_REPORT || true
-          ls -l $SCRIPT_PATH || true
-
-          node $SCRIPT_PATH -i "$PLAYWRIGHT_REPORT" -t playwright
+          npx @vention-test-portal/test-portal-integration-cli upload \
+            --input $GITHUB_WORKSPACE/results.json \
+            --type playwright \
