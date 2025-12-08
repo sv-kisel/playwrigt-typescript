@@ -34,7 +34,7 @@ jobs:
           npx playwright test
           ls -l results.json || true
 
-      # 4 Step: Run Playwright tests
+      # 4 Step: Upload Playwright report artifact
       - name: Upload Playwright report artifact
         if: always()
         uses: actions/upload-artifact@v4
