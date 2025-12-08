@@ -16,41 +16,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Stage: Checkout main repo
+      # 1 Step: Checkout main repo
       - name: Checkout main repo
         uses: actions/checkout@v4
         with:
           repository: sv-kisel/playwrigt-typescript
           ref: main
 
-      # 2️⃣ Stage: Install dependencies
+      # 2 Step: Install dependencies
       - name: Install dependencies
         run: |
           npm ci
           npx playwright install --with-deps
 
+      # 3 Step: Run Playwright tests
       - name: Run Playwright tests
         continue-on-error: true
         run: |
           npx playwright test
           ls -l results.json || true
 
-      - name: Upload Vitest report artifact
+      # 4 Step: Run Playwright tests
+      - name: Upload Playwright report artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: results.json
-          
+
+      # 5 Step: Configure npm auth for GitHub Packages
       - name: Configure npm auth for GitHub Packages
         run: |
           echo "@vention-test-portal:registry=https://npm.pkg.github.com" >> .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_GITHUB_TOKEN }}" >> .npmrc
    
+      # 6 Step: Install test reporter CLI
       - name: Install test reporter CLI
         run: |
           npm install @vention-test-portal/test-portal-integration-cli
 
+      # 7 Step: Upload Test Results
       - name: Upload Test Results
         if: always()
         run: |
