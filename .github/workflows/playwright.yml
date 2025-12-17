@@ -51,7 +51,7 @@ jobs:
       # 6 Step: Install test reporter CLI
       - name: Install test reporter CLI
         run: |
-          npm install @vention-test-portal/test-portal-integration-cli@1.1.0
+          npm install @vention-test-portal/test-portal-integration-cli@1.0.0-alpha.1
 
       # 7 Step: Upload Test Results
       - name: Upload Test Results
