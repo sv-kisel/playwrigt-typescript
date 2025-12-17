@@ -22,6 +22,9 @@ test('2 plus 3 is 5', async ({ page }) => {
   expect(2 + 3).toEqual(5);
 });
 
+test('3 plus 3 is 6', async ({ page }) => {
+  expect(2 + 3).toEqual(6);
+});
 /* test('has title_2', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
