@@ -25,7 +25,7 @@ test('2 plus 3 is 5', async ({ page }) => {
 test('3 plus 3 is 6', async ({ page }) => {
   expect(2 + 3).toEqual(6);
 });
-/* test('has title_2', async ({ page }) => {
+ test('has title_2', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
   // Expect a title "to contain" a substring.
@@ -37,4 +37,4 @@ test('has title_3', async ({ page }) => {
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Googole/);
-});*/
+});
