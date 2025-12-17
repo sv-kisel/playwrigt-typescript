@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
+test('has title_1', async ({ page }) => {
   await page.goto('https://playwright.dev/');
 
   // Expect a title "to contain" a substring.
@@ -17,16 +17,16 @@ test('get started link', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
 });
 
-test('has title 2', async ({ page }) => {
-  await page.goto('https://playwright.devs/');
+test('has title_2', async ({ page }) => {
+  await page.goto('https://playwright.dev/');
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+  await expect(page).toHaveTitle(/Playwrights/);
 });
 
-test('has title 3', async ({ page }) => {
+test('has title_3', async ({ page }) => {
   await page.goto('https://www.google.com/maps/');
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Gooogle/);
+  await expect(page).toHaveTitle(/Googole/);
 });
